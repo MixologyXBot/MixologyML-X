@@ -689,7 +689,7 @@ async def checking_access(user_id, button=None):
         if button is None:
             button = ButtonMaker()
         encrypt_url = b64encode(f"{token}&&{user_id}".encode()).decode()
-        telegram_url = short_url(f"https://t.me/{bot_name}?start={encrypt_url}")
+        telegram_url = short_url(f"https://telegram.me/{bot_name}?start={encrypt_url}")
         button.ubutton(
             'Generate New Token',
             f"https://{config_dict['VERCEL_DOMAIN']}/token/{get_fernet().encrypt(json.dumps({'url': telegram_url, 'exp': int(time() + config_dict.get('VERCEL_TOKEN_TTL', 0))}).encode()).decode()}"
