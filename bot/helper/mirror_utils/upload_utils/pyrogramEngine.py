@@ -9,7 +9,7 @@ from pyrogram.types import InputMediaVideo, InputMediaDocument, InlineKeyboardMa
 from pyrogram.errors import FloodWait, RPCError, PeerIdInvalid, ChannelInvalid
 from asyncio import sleep
 from tenacity import retry, wait_exponential, stop_after_attempt, retry_if_exception_type, RetryError
-from re import match as re_match, sub as re_sub
+from re import match as re_match, sub as re_sub, search as re_search, I as re_I
 from natsort import natsorted
 from aioshutil import copy
 
@@ -423,7 +423,7 @@ class TgUploader:
                 else:
                     width = 480
                     height = 320
-                if not self.__up_path.upper().endswith(("MKV", "MP4")):
+                if not bool(re_search(r'\.mkv(?:\.0*\d+)?$|\.mp4(?:\.0*\d+)?$', self.__up_path, re_I)):
                     dirpath, file_ = self.__up_path.rsplit('/', 1)
                     if self.__listener.seed and not self.__listener.newDir and not dirpath.endswith("/splited_files_mltb"):
                         dirpath = f"{dirpath}/copied_mltb"
