@@ -180,12 +180,16 @@ async def split_file(path, size, file_, dirpath, split_size, listener, start_tim
         duration = (await get_media_info(path))[0]
         base_name, extension = ospath.splitext(file_)
         split_size -= 5000000
+        as_doc = user_dict.get('as_doc', False) or ('as_doc' not in user_dict and config_dict['AS_DOCUMENT'])
         while i <= parts or start_time < duration - 4:
-            parted_name = f"{base_name}{extension}.{i:03}"
+            parted_name = f"{base_name}{extension}.{i:03}" if as_doc else f"{base_name}.part{i:03}{extension}"
             out_path = ospath.join(dirpath, parted_name)
             cmd = [bot_cache['pkgs'][2], "-hide_banner", "-loglevel", "error", "-ss", str(start_time), "-i", path,
                    "-fs", str(split_size), "-map", "0", "-map_chapters", "-1", "-async", "1", "-strict",
-                   "-2", "-c", "copy", "-f", "matroska" if extension == ".mkv" else extension.lstrip("."), out_path]
+                   "-2", "-c", "copy"]
+            if as_doc:
+                cmd.extend(["-f", "matroska" if extension == ".mkv" else extension.lstrip(".")])
+            cmd.append(out_path)
             if not multi_streams:
                 del cmd[10]
                 del cmd[10]
